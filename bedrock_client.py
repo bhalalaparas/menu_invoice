@@ -170,7 +170,7 @@ class InvoiceProcessor:
             model_text = call_bedrock_model(
                 prompt,
                 image_path=image_path,
-                max_tokens=4096,
+                max_tokens=8092,
                 source="invoice",
                 page_number=page_number,
                 total_pages=total_pages,

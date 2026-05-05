@@ -24,7 +24,7 @@ Return ONLY valid JSON (no explanation) with these exact fields:
   "total": "string or null",
   "line_items": [
     {{
-      "qty": "string",
+      "qty": "number",
       "ItemName": "string",
       "itemDescription": "string",
       "rate": "string or null",
