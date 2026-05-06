@@ -33,10 +33,22 @@ def load_prompt():
 prompt_text = load_prompt()
 
 
+def _detect_media_type(image_bytes: bytes) -> str:
+    if image_bytes[:4] == b"\x89PNG":
+        return "image/png"
+    if image_bytes[:3] == b"\xff\xd8\xff":
+        return "image/jpeg"
+    if image_bytes[:6] in (b"GIF87a", b"GIF89a"):
+        return "image/gif"
+    if image_bytes[:4] == b"RIFF" and image_bytes[8:12] == b"WEBP":
+        return "image/webp"
+    return "image/jpeg"
+
+
 def extract_menu_from_image(image_bytes):
 
     encoded_image = base64.b64encode(image_bytes).decode("utf-8")
-    
+    media_type = _detect_media_type(image_bytes)
 
     content = [
         {"type": "text", "text": prompt_text},
@@ -44,7 +56,7 @@ def extract_menu_from_image(image_bytes):
             "type": "image",
             "source": {
                 "type": "base64",
-                "media_type": "image/jpeg",
+                "media_type": media_type,
                 "data": encoded_image,
             },
         },
