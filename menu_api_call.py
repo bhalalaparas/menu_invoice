@@ -12,10 +12,15 @@ load_env_file()
 from invoice_config import BRT
 from bedrock_usage_log import log_bedrock_call
 
+
+import json
+import re
+
 MODEL_ID = os.getenv(
     "BEDROCK_MENU_MODEL_ID",
-    "arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-opus-4-7",
+    "arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6",
 )
+# "arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-opus-4-7",
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 OUTPUT_DIR = os.path.join(BASE_DIR, "output")
@@ -32,6 +37,17 @@ def load_prompt():
 
 prompt_text = load_prompt()
 
+
+
+def clean_and_parse_json(raw_text):
+    # Strip markdown code fences if present
+    cleaned = re.sub(r'^```(?:json)?\s*', '', raw_text.strip())
+    cleaned = re.sub(r'\s*```$', '', cleaned.strip())
+    
+    # Also handle the leading '>'\n raw_text== prefix shown in your output
+    cleaned = re.sub(r"^'>\s*\n?raw_text==\s*", '', cleaned.strip())
+    
+    return json.loads(cleaned)
 
 def _detect_media_type(image_bytes: bytes) -> str:
     if image_bytes[:4] == b"\x89PNG":
@@ -64,7 +80,7 @@ def extract_menu_from_image(image_bytes):
 
     body = {
         "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 5000,
+        "max_tokens": 8000,
         "messages": [{"role": "user", "content": content}],
     }
 
@@ -82,6 +98,9 @@ def extract_menu_from_image(image_bytes):
         if part.get("type") == "text":
             raw_text += part.get("text", "")
     raw_text = raw_text.strip()
+
+    parsed_json = clean_and_parse_json(raw_text)
+
 
     log_bedrock_call(
         source="menu_api_call",

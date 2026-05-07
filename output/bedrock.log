@@ -1,0 +1,8 @@
+2026-05-06 19:33:25,275 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-opus-4-7 in_tok=2779 out_tok=4351
+2026-05-06 20:03:02,503 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-opus-4-7 in_tok=2779 out_tok=4110
+2026-05-06 22:46:45,526 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6 in_tok=3145 out_tok=3983
+2026-05-06 22:51:17,099 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6 in_tok=3145 out_tok=3990
+2026-05-06 22:55:53,589 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6 in_tok=3145 out_tok=3220
+2026-05-06 23:01:37,139 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6 in_tok=3145 out_tok=3958
+2026-05-06 23:04:37,469 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6 in_tok=3145 out_tok=3647
+2026-05-06 23:17:03,783 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6 in_tok=3169 out_tok=4027

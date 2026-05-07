@@ -5,122 +5,158 @@ Extract menu information from the provided menu image and convert it into struct
 
 Follow all rules strictly.
 
-CATEGORY GROUPING
+--------------------------------------------------
+1. CATEGORY GROUPING
+--------------------------------------------------
 
-Group all items under their respective category names.
+- Group all items under their respective category names.
+- Do not merge categories.
+- Do not skip any item.
 
-Do not merge categories.
+--------------------------------------------------
+2. SIZE HANDLING (Category-Level Sizes)
+--------------------------------------------------
 
-Do not skip any item.
+If a category contains size columns like R, M, L (or Small/Medium/Large or sml/lrg/Half/Full):
 
-SIZE HANDLING (Category-Level Sizes)
-
-If a category contains size columns like R, M, L:
-
-"lstInvSize": true
-
-
-Each item must use:
-
-"sizes": { "R": price, "M": price, "L": price }
-
-If a category contains size columns like Half, Full:
-
-"lstInvSize": true
-
+    "lstInvSize": true
 
 Each item must use:
+    "sizes": { "R": price, "M": price, "L": price }
+    (use whatever size keys appear in the menu header, e.g. "S"/"M"/"L", "Half"/"Full", "sml"/"lrg")
 
-"sizes": { "Half": price, "Full": price}
+If a specific item in an R/M/L category is only available in one size (e.g. only M is priced):
+    Include only that size key in "sizes": { "M": price }
+    Do NOT force all size keys if they are blank or missing for that item.
 
+If a category has only one fixed size labeled "Only Medium" or similar:
 
-If a category has only one fixed size:
-
-"lstInvSize": false  
-"sizeType": "ONLY_MEDIUM"
-
+    "lstInvSize": false
+    "sizeType": "ONLY_MEDIUM"
 
 Use:
+    "price": value
 
-"price": value
-
+If a category has text-based size in the price itself (e.g. "sml 5.99/lrg 9.99"):
+    Treat as lstInvSize: true and extract the key-value pairs as sizes.
 
 If no size exists at all:
 
-"lstInvSize": false
+    "lstInvSize": false
+    "sizeType": null
 
+--------------------------------------------------
+3. PRICE FORMAT DETECTION
+--------------------------------------------------
 
-ITEM-LEVEL MODIFIER DETECTION
+Before mapping prices to items or modifier options, parse prices using these rules:
 
-If an item contains option patterns such as:
+A) Single numeric price:
+   "120/-"   → 120
+   "120"     → 120
+   "$5.99"   → 5.99
 
-(Veg/Non Veg)
+B) Two prices separated by "/" or " " (slash/space):
+   "140/- 160/-"   → [140, 160]
+   "140/160"       → [140, 160]
+   "5.99/lrg 9.99" → handled as sizes (see Section 2)
 
-(Veg / Non Veg)
+C) Three or more prices — concatenated with "/-" or "/" or space:
+   "150/-160/-170/-"    → [150, 160, 170]
+   "150/160/170"        → [150, 160, 170]
+   "200/-220/-210/-"    → [200, 220, 210]
 
-(Paneer, Baby Corn, Mushroom, Gobi)
+D) Multi-line prices (prices split across two visual lines in the menu):
+   Concatenate all price tokens for that item row and map sequentially.
+   Example: first line "150/-160/-170/-", second line "170/-160/-"
+   → combined prices: [150, 160, 170, 170, 160]
 
-(Chicken, Prawn, Fish)
+E) "MRP" price (no fixed price printed):
+   "price": null
 
-Any slash-separated or comma-separated values inside brackets
+F) If price count and modifier option count mismatch:
+   Map sequentially. Assign 0 to any remaining options without a price.
+
+--------------------------------------------------
+4. ITEM-LEVEL MODIFIER DETECTION
+--------------------------------------------------
+
+If an item name contains option patterns such as:
+
+- (Veg/Non Veg)
+- (Veg / Non Veg)
+- (Paneer, Baby Corn, Mushroom, Gobi)
+- (Chicken, Prawn, Fish)
+- Any slash-separated or comma-separated values inside brackets
 
 Then treat this as ITEM-LEVEL MODIFIER.
 
-You MUST:
+EXCEPTION — Single-label items: If the bracket contains only ONE value like "(Non Veg)" or "(Veg)" and the item has a single price, do NOT create a modifier. Simply strip the bracket and use the item name as-is with that single price.
+
+For all other bracket patterns, You MUST:
 
 A) Set category:
-
-"lstInventoryModifiers": true
-
+   "lstInventoryModifiers": true
 
 B) Remove bracket content from item name.
 
 C) Create a separate modifier group per item:
 
 {
-"groupName": "Item Name Modifiers",
-"type": "modifier",
-"lstInvSize": false,
-"options": [
-{
-"name": "Option Name",
-"price": 0,
-"modifierGroup": null
+  "groupName": "Item Name Modifiers",
+  "type": "modifier",
+  "lstInvSize": false,
+  "options": [
+    {
+      "name": "Option Name",
+      "price": 0,
+      "modifierGroup": null
+    }
+  ]
 }
-]
-}
 
-D) Price Mapping Rules:
+D) Price Mapping Rules (use Section 3 to parse prices first):
 
-If pricing format is:
+Parse all prices from the item's price field, then map sequentially:
+   First price  → First modifier option
+   Second price → Second modifier option
+   Third price  → Third modifier option
+   ...and so on.
 
-140/- 160/-
-140/160
-150/170/190
-
-Map sequentially:
-
-First price → First modifier option
-Second price → Second modifier option
-Third price → Third modifier option
+If more options than prices: assign price 0 to remaining options.
+If more prices than options: map sequentially, ignore extras.
 
 E) Item structure when modifier exists:
 
 {
-"name": "Item Name",
-"description": null,
-"sizes": {},
-"price": null,
-"modifierGroup": "Item Name Modifiers"
+  "name": "Item Name",
+  "description": null,
+  "sizes": {},
+  "price": null,
+  "modifierGroup": "Item Name Modifiers"
 }
 
 IMPORTANT:
+- Do NOT keep combined price at item level.
+- Move all pricing into modifier options.
 
-Do NOT keep combined price at item level.
+--------------------------------------------------
+5. MIXED MODIFIER CATEGORIES
+--------------------------------------------------
 
-Move all pricing into modifier options.
+If a category has SOME items with bracket modifiers and SOME items without:
 
-CATEGORY-LEVEL MODIFIER DETECTION
+- Apply item-level modifiers ONLY to items that have bracket patterns.
+- Items without brackets remain as plain items with a direct price.
+- Set category: "lstInventoryModifiers": true (because at least one item has a modifier).
+
+Example:
+  - "Veg Noodle" with price 120 → plain item, no modifier
+  - "Mix Noodle (Veg/Non Veg)" with prices 140/160 → item-level modifier
+
+--------------------------------------------------
+6. CATEGORY-LEVEL MODIFIER DETECTION
+--------------------------------------------------
 
 If a modifier section applies to ALL items within a single category
 (e.g., Half/Full, Regular/Large, Veg/Non Veg for whole category),
@@ -128,45 +164,40 @@ If a modifier section applies to ALL items within a single category
 Then:
 
 A) Set:
-
-"lstInventoryModifiers": true
-
+   "lstInventoryModifiers": true
 
 B) Create ONE modifier group for that category:
 
 {
-"groupName": "Category Name Modifiers",
-"type": "modifier",
-"lstInvSize": false,
-"options": [
-{
-"name": "Option Name",
-"price": 0,
-"modifierGroup": null
-}
-]
+  "groupName": "Category Name Modifiers",
+  "type": "modifier",
+  "lstInvSize": false,
+  "options": [
+    {
+      "name": "Option Name",
+      "price": 0,
+      "modifierGroup": null
+    }
+  ]
 }
 
 C) Assign:
-
-"modifierGroup": "Category Name Modifiers"
-
+   "modifierGroup": "Category Name Modifiers"
 
 D) Map prices sequentially per item if multiple prices exist.
 
 E) Do NOT create separate modifier groups per item.
 
-SHARED CATEGORY-LEVEL MODIFIER (MULTIPLE CATEGORIES)
+--------------------------------------------------
+7. SHARED CATEGORY-LEVEL MODIFIER (MULTIPLE CATEGORIES)
+--------------------------------------------------
 
 If a separate section exists such as:
 
-Extra Topping
-
-Add Ons
-
-Upgrade Options
-
-Additional Toppings
+- Extra Topping
+- Add Ons
+- Upgrade Options
+- Additional Toppings
 
 And it clearly applies to multiple categories
 (e.g., American Veg Pizza, Desi Veg Pizza, Italian Veg Pizza),
@@ -178,49 +209,44 @@ You MUST:
 A) Create ONE shared modifier group:
 
 {
-"groupName": "Extra Topping",
-"type": "modifier",
-"lstInvSize": true/false,
-"options": [
-{
-"name": "Extra Cheese",
-"price": 0,
-"prices": { "R": 40, "M": 60, "L": 90 },
-"modifierGroup": null
-}
-]
+  "groupName": "Extra Topping",
+  "type": "modifier",
+  "lstInvSize": true/false,
+  "options": [
+    {
+      "name": "Extra Cheese",
+      "price": 0,
+      "prices": { "R": 40, "M": 60, "L": 90 },
+      "modifierGroup": null
+    }
+  ]
 }
 
 B) If modifier pricing depends on size (R/M/L):
-
-"lstInvSize": true
-
-
-Use:
-
-"prices": { "R": value, "M": value, "L": value }
-
+   "lstInvSize": true
+   Use:
+      "prices": { "R": value, "M": value, "L": value }
 
 C) If single price:
-
-"lstInvSize": false  
-Use: "price": value
-
+   "lstInvSize": false
+   Use: "price": value
 
 D) Assign this modifier group to ALL applicable categories:
 
 {
-"category": "American Veg Pizza",
-"lstInventoryModifiers": true,
-"modifierGroup": "Extra Topping"
+  "category": "American Veg Pizza",
+  "lstInventoryModifiers": true,
+  "modifierGroup": "Extra Topping"
 }
 
 E) Do NOT duplicate shared modifier groups.
 
-NESTED MODIFIER GROUP (MODIFIER INSIDE MODIFIER)
+--------------------------------------------------
+8. NESTED MODIFIER GROUP (MODIFIER INSIDE MODIFIER)
+--------------------------------------------------
 
-If a modifier option itself contains selectable options
-(example: Extra Cheese → Mozzarella, Cheddar, Parmesan)
+If a modifier option itself contains selectable options visible in the menu
+(example: Extra Cheese → shows sub-list: Mozzarella, Cheddar, Parmesan)
 
 Then treat this as a NESTED MODIFIER GROUP.
 
@@ -229,143 +255,134 @@ You MUST:
 A) Create a separate modifier group for the inner modifier:
 
 {
-"groupName": "Extra Cheese Type",
-"type": "modifier",
-"lstInvSize": false,
-"options": [
-{
-"name": "Mozzarella",
-"price": 0,
-"modifierGroup": null
-},
-{
-"name": "Cheddar",
-"price": 0,
-"modifierGroup": null
-}
-]
+  "groupName": "Extra Cheese Type",
+  "type": "modifier",
+  "lstInvSize": false,
+  "options": [
+    {
+      "name": "Mozzarella",
+      "price": 0,
+      "modifierGroup": null
+    },
+    {
+      "name": "Cheddar",
+      "price": 0,
+      "modifierGroup": null
+    }
+  ]
 }
 
 B) Attach this nested group to the parent modifier option:
 
-Example:
-
 {
-"name": "Extra Cheese",
-"price": 40,
-"modifierGroup": "Extra Cheese Type"
+  "name": "Extra Cheese",
+  "price": 40,
+  "modifierGroup": "Extra Cheese Type"
 }
 
 C) Nested modifier must NOT duplicate pricing unless explicitly shown.
 
 D) Nested modifiers can exist under:
-
-Item-level modifier
-
-Category-level modifier
-
-Shared category-level modifier
+   Item-level modifier
+   Category-level modifier
+   Shared category-level modifier
 
 E) Maintain hierarchy strictly:
-Category → Item → Modifier → Nested Modifier
+   Category → Item → Modifier → Nested Modifier
 
-ITEMS WITHOUT MODIFIERS
+--------------------------------------------------
+9. ITEMS WITHOUT MODIFIERS
+--------------------------------------------------
 
 If item has:
-
-No size
-
-No modifier
-
-No variation
+- No size
+- No modifier
+- No variation
 
 Then:
 
 {
-"name": "",
-"description": null,
-"sizes": {},
-"price": value,
-"modifierGroup": null
+  "name": "",
+  "description": null,
+  "sizes": {},
+  "price": value,
+  "modifierGroup": null
 }
 
+If price is MRP (no fixed price printed):
+  "price": null
+
 And category:
+    "lstInventoryModifiers": false
 
-"lstInventoryModifiers": false
+--------------------------------------------------
+10. MODIFIER PRIORITY RULE
+--------------------------------------------------
 
+1. If modifier applies only to one item → Item-Level Modifier.
+2. If modifier applies to entire category → Category-Level Modifier.
+3. If modifier applies to multiple categories → Shared Category-Level Modifier.
+4. If modifier option has sub-options → Nested Modifier Group.
+5. Never duplicate modifier groups.
 
-MODIFIER PRIORITY RULE
-
-If modifier applies only to one item → Item-Level Modifier.
-
-If modifier applies to entire category → Category-Level Modifier.
-
-If modifier applies to multiple categories → Shared Category-Level Modifier.
-
-If modifier contains sub-options → Nested Modifier Group.
-
-Never duplicate modifier groups.
-
-FINAL STRUCTURE (STRICT FORMAT)
+--------------------------------------------------
+11. FINAL STRUCTURE (STRICT FORMAT)
+--------------------------------------------------
 
 Return ONLY this JSON structure:
 
 {
-"categories": [
-{
-"category": "",
-"lstInvSize": true/false,
-"lstInventoryModifiers": true/false,
-"sizeType": "",
-"modifierGroup": "",
-"items": [
-{
-"name": "",
-"description": "",
-"sizes": {},
-"price": 0,
-"modifierGroup": ""
+  "categories": [
+    {
+      "category": "",
+      "lstInvSize": true/false,
+      "lstInventoryModifiers": true/false,
+      "sizeType": null,
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        }
+      ]
+    }
+  ],
+  "modifierGroups": [
+    {
+      "groupName": "",
+      "type": "modifier",
+      "lstInvSize": true/false,
+      "options": [
+        {
+          "name": "",
+          "price": 0,
+          "prices": {},
+          "modifierGroup": null
+        }
+      ]
+    }
+  ]
 }
-]
-}
-],
-"modifierGroups": [
-{
-"groupName": "",
-"type": "modifier",
-"lstInvSize": true/false,
-"options": [
-{
-"name": "",
-"price": 0,
-"prices": {},
-"modifierGroup": ""
-}
-]
-}
-]
-}
 
-STRICT RULES
+--------------------------------------------------
+12. STRICT RULES
+--------------------------------------------------
 
-Do not skip any item.
-
-Keep prices as numbers only.
-
-Remove brackets from item names.
-
-Do not duplicate modifier groups.
-
-Do not leave price at item level if modifier exists.
-
-If price count and modifier count mismatch, map sequentially.
-
-Nested modifiers must reference parent modifier correctly.
-
-If a field is not applicable, set it to null.
-
-Return ONLY valid JSON.
-
-Do NOT add explanations.
-
-Do NOT use markdown.
+- Do not skip any item.
+- Keep prices as numbers only (no "/- " suffix, no currency symbols).
+- Remove brackets and their content from item names.
+- Do not duplicate modifier groups.
+- Do not leave price at item level if a modifier group exists.
+- If price count and modifier count mismatch, map sequentially; assign 0 to unpaired options.
+- Nested modifiers must reference parent modifier correctly.
+- If a field is not applicable, set it to null (NOT empty string "").
+- "sizeType" must be null unless it is "ONLY_MEDIUM".
+- "modifierGroup" at category or item level must be null when not applicable.
+- "prices" field in modifier options must be {} (empty object) when not applicable.
+- Return ONLY valid JSON.
+- Do NOT add explanations.
+- Do NOT use markdown.
+- Do not miss any itam details recheck and found any things is missing add the item proper as per rule

@@ -1,0 +1,494 @@
+{
+  "categories": [
+    {
+      "category": "American Veg Pizza",
+      "lstInvSize": true,
+      "lstInventoryModifiers": false,
+      "sizeType": null,
+      "modifierGroup": "Extra Topping",
+      "items": [
+        {
+          "name": "Margherita Pizza",
+          "description": null,
+          "sizes": {
+            "R": 125,
+            "M": 275,
+            "L": 400
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Vegetarian Bite",
+          "description": null,
+          "sizes": {
+            "R": 125,
+            "M": 275,
+            "L": 400
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Mexican Delight",
+          "description": null,
+          "sizes": {
+            "R": 275,
+            "M": 335,
+            "L": 525
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Mushroom Riot",
+          "description": null,
+          "sizes": {
+            "R": 275,
+            "M": 335,
+            "L": 525
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Hawaiian Fantasy",
+          "description": null,
+          "sizes": {
+            "R": 245,
+            "M": 260,
+            "L": 545
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "American Special",
+          "description": null,
+          "sizes": {
+            "R": 245,
+            "M": 260,
+            "L": 545
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Spicy Treat",
+          "description": null,
+          "sizes": {
+            "R": 245,
+            "M": 260,
+            "L": 545
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Ginger Fantasy",
+          "description": null,
+          "sizes": {
+            "R": 265,
+            "M": 420,
+            "L": 570
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Cheese Burst",
+          "description": null,
+          "sizes": {
+            "R": 323
+          },
+          "price": null,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Desi Veg Pizza",
+      "lstInvSize": true,
+      "lstInventoryModifiers": false,
+      "sizeType": null,
+      "modifierGroup": "Extra Topping",
+      "items": [
+        {
+          "name": "Tandoori Paneer",
+          "description": null,
+          "sizes": {
+            "R": 225,
+            "M": 335,
+            "L": 525
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Yum Dub",
+          "description": null,
+          "sizes": {
+            "R": 245,
+            "M": 360,
+            "L": 545
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Balle Balle",
+          "description": null,
+          "sizes": {
+            "R": 245,
+            "M": 360,
+            "L": 545
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Chatpata Paneer",
+          "description": null,
+          "sizes": {
+            "R": 245,
+            "M": 420,
+            "L": 570
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Pav Bhaji",
+          "description": null,
+          "sizes": {},
+          "price": 209,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Italian Veg Pizza",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": "ONLY_MEDIUM",
+      "modifierGroup": "Extra Topping",
+      "items": [
+        {
+          "name": "Classic Margherita",
+          "description": null,
+          "sizes": {},
+          "price": 250,
+          "modifierGroup": null
+        },
+        {
+          "name": "Giardinera",
+          "description": null,
+          "sizes": {},
+          "price": 280,
+          "modifierGroup": null
+        },
+        {
+          "name": "Pizza Grilled",
+          "description": null,
+          "sizes": {},
+          "price": 300,
+          "modifierGroup": null
+        },
+        {
+          "name": "Quattro Formaggie",
+          "description": null,
+          "sizes": {},
+          "price": 350,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Breads",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": null,
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Garlic Bread",
+          "description": null,
+          "sizes": {},
+          "price": 75,
+          "modifierGroup": null
+        },
+        {
+          "name": "Garlic Bread N Cheese",
+          "description": null,
+          "sizes": {},
+          "price": 115,
+          "modifierGroup": null
+        },
+        {
+          "name": "Supreme Garlic Bread",
+          "description": null,
+          "sizes": {},
+          "price": 122,
+          "modifierGroup": null
+        },
+        {
+          "name": "Jain Bread",
+          "description": null,
+          "sizes": {},
+          "price": 75,
+          "modifierGroup": null
+        },
+        {
+          "name": "Jain Bread N Cheese",
+          "description": null,
+          "sizes": {},
+          "price": 115,
+          "modifierGroup": null
+        },
+        {
+          "name": "Supreme Jain Bread",
+          "description": null,
+          "sizes": {},
+          "price": 125,
+          "modifierGroup": null
+        },
+        {
+          "name": "Stuffed Garlic Bread",
+          "description": null,
+          "sizes": {},
+          "price": 145,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Starter",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": null,
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Potato Wedge",
+          "description": null,
+          "sizes": {},
+          "price": 90,
+          "modifierGroup": null
+        },
+        {
+          "name": "Cheesy Potato Pops",
+          "description": null,
+          "sizes": {},
+          "price": 90,
+          "modifierGroup": null
+        },
+        {
+          "name": "Fresh Dough Bites",
+          "description": null,
+          "sizes": {},
+          "price": 90,
+          "modifierGroup": null
+        },
+        {
+          "name": "Signature Breadsticks",
+          "description": null,
+          "sizes": {},
+          "price": 90,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Salad",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": null,
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Greek Salad",
+          "description": null,
+          "sizes": {},
+          "price": 120,
+          "modifierGroup": null
+        },
+        {
+          "name": "Hawaiian Salad",
+          "description": null,
+          "sizes": {},
+          "price": 120,
+          "modifierGroup": null
+        },
+        {
+          "name": "Russian Salad",
+          "description": null,
+          "sizes": {},
+          "price": 120,
+          "modifierGroup": null
+        },
+        {
+          "name": "Mix Salad Bowl Veg",
+          "description": null,
+          "sizes": {},
+          "price": 120,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Wrap",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": null,
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Veg Wrap",
+          "description": null,
+          "sizes": {},
+          "price": 99,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Pasta",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": null,
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Roman Pasta",
+          "description": null,
+          "sizes": {},
+          "price": 120,
+          "modifierGroup": null
+        },
+        {
+          "name": "Creamy Indian Pasta",
+          "description": null,
+          "sizes": {},
+          "price": 120,
+          "modifierGroup": null
+        },
+        {
+          "name": "Pasta Alfredo",
+          "description": null,
+          "sizes": {},
+          "price": 120,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Dessert",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": null,
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Brownie",
+          "description": null,
+          "sizes": {},
+          "price": 98,
+          "modifierGroup": null
+        },
+        {
+          "name": "Chocolate Pizza",
+          "description": null,
+          "sizes": {},
+          "price": 120,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Beverages",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": null,
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Coke",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Fanta",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Sprite",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Mineral Water",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        }
+      ]
+    }
+  ],
+  "modifierGroups": [
+    {
+      "groupName": "Extra Topping",
+      "type": "modifier",
+      "lstInvSize": true,
+      "options": [
+        {
+          "name": "Extra Cheese",
+          "price": 0,
+          "prices": {
+            "R": 40,
+            "M": 60,
+            "L": 90
+          },
+          "modifierGroup": null
+        },
+        {
+          "name": "Choice of Sauces",
+          "price": 0,
+          "prices": {
+            "R": 20,
+            "M": 40,
+            "L": 60
+          },
+          "modifierGroup": null
+        },
+        {
+          "name": "Upgrade to Thin Crust",
+          "price": 0,
+          "prices": {
+            "R": 30,
+            "M": 60,
+            "L": 90
+          },
+          "modifierGroup": null
+        },
+        {
+          "name": "Extra Veg Topping",
+          "price": 0,
+          "prices": {
+            "R": 25,
+            "M": 50,
+            "L": 75
+          },
+          "modifierGroup": null
+        }
+      ]
+    }
+  ]
+}

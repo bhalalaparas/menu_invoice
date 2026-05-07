@@ -4,14 +4,13 @@ import uuid
 
 
 # ---------------- BUILD SIZE LIST ----------------
+
 def build_size_list(item):
     sizes = item.get("sizes", {})
-
     if not sizes:
         return [], False
 
     size_list = []
-
     for index, (size_name, price) in enumerate(sizes.items()):
         size_list.append({
             "nvarParentItemNum": "",
@@ -30,14 +29,7 @@ def build_size_list(item):
 
 # ---------------- BUILD MODIFIER GROUPS ----------------
 def build_modifier_groups(item, category, all_modifier_groups):
-
-    if not category.get("lstInventoryModifiers"):
-        return []
-
-    parent_modifier_group_name = item.get("modifierGroup")
-
-    if not parent_modifier_group_name:
-        parent_modifier_group_name = category.get("modifierGroup")
+    parent_modifier_group_name = category.get("modifierGroup")
 
     if not parent_modifier_group_name:
         return []
@@ -54,42 +46,35 @@ def build_modifier_groups(item, category, all_modifier_groups):
 
     for mod_index, option in enumerate(parent_group.get("options", [])):
 
+        child_group_name = option.get("modifierGroup")
+        child_group = next(
+            (m for m in all_modifier_groups if m["groupName"] == child_group_name),
+            None
+        )
+
         modifier_items = []
 
-        if not option.get("modifierGroup"):
+        if child_group:
+            for child_index, child_option in enumerate(child_group.get("options", [])):
+                size_prices = []
 
-            modifier_items.append({
-                "Modifier": option["name"],
-                "ItemNum": "",
-                "ItemPrice": f"{option.get('price', 0):.2f}",
-                "bitIsDeleted": False,
-                "intDisplayIndex": 0,
-                "bitIsPreSelected": False,
-                "bitHasOverride": False,
-                "ModifierItemSizePrices": []
-            })
+                if parent_group.get("lstInvSize"):
+                    for size_name, price in option.get("prices", {}).items():
+                        size_prices.append({
+                            "SizeName": size_name,
+                            "intSizePriceType": str(price)
+                        })
 
-        else:
-            child_group_name = option.get("modifierGroup")
-
-            child_group = next(
-                (m for m in all_modifier_groups if m["groupName"] == child_group_name),
-                None
-            )
-
-            if child_group:
-                for child_index, child_option in enumerate(child_group.get("options", [])):
-
-                    modifier_items.append({
-                        "Modifier": child_option["name"],
-                        "ItemNum": "",
-                        "ItemPrice": f"{child_option.get('price', 0):.2f}",
-                        "bitIsDeleted": False,
-                        "intDisplayIndex": child_index,
-                        "bitIsPreSelected": False,
-                        "bitHasOverride": False,
-                        "ModifierItemSizePrices": []
-                    })
+                modifier_items.append({
+                    "Modifier": child_option["name"],
+                    "ItemNum": "",
+                    "ItemPrice": "0.00",
+                    "bitIsDeleted": False,
+                    "intDisplayIndex": child_index,
+                    "bitIsPreSelected": False,
+                    "bitHasOverride": False,
+                    "ModifierItemSizePrices": size_prices
+                })
 
         result_modifiers.append({
             "nvarModName": option["name"],
@@ -107,9 +92,9 @@ def build_modifier_groups(item, category, all_modifier_groups):
     return result_modifiers
 
 
+
 # ---------------- TRANSFORM ----------------
 def transform_menu(input_data):
-
     output_items = []
 
     categories = input_data.get("categories", [])
@@ -122,7 +107,9 @@ def transform_menu(input_data):
 
             size_list, has_sizes = build_size_list(item)
 
-            base_price = item.get("price") or 0
+            base_price = item.get("price")
+            if base_price is None:
+                base_price = 0
 
             modifiers = build_modifier_groups(item, category, modifier_groups)
 
@@ -156,6 +143,7 @@ def transform_menu(input_data):
             output_items.append(transformed_item)
 
     return output_items
+
 
 
 def save_transformed_json(input_json, unique_id):

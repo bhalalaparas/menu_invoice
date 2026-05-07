@@ -1,0 +1,545 @@
+{
+  "categories": [
+    {
+      "category": "American Veg Pizza",
+      "lstInvSize": true,
+      "lstInventoryModifiers": false,
+      "sizeType": "",
+      "modifierGroup": "Extra Topping",
+      "items": [
+        {
+          "name": "Margherita Pizza",
+          "description": "Lots of Cheese",
+          "sizes": {
+            "R": 165,
+            "M": 305,
+            "L": 380
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Vegetarian Bite",
+          "description": "Onion, green pepper, tomato, olives",
+          "sizes": {
+            "R": 185,
+            "M": 335,
+            "L": 390
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Mushroom Riot",
+          "description": "",
+          "sizes": {
+            "R": 225,
+            "M": 345,
+            "L": 415
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Mexican Delight",
+          "description": "Cheese, chilly, sweet corn, tomato, olives",
+          "sizes": {
+            "R": 245,
+            "M": 365,
+            "L": 445
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "American Heat",
+          "description": "Cheese, green pepper, onion, baby corn, jalapeno",
+          "sizes": {
+            "R": 245,
+            "M": 365,
+            "L": 445
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Spicy Treat",
+          "description": "Cheese, green pepper, spicy paneer, tomato",
+          "sizes": {
+            "R": 255,
+            "M": 375,
+            "L": 455
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Hawaiian Fantasy",
+          "description": "Cheese, mushroom, pineapple, BBQ Paneer, jalapeno",
+          "sizes": {
+            "R": 255,
+            "M": 375,
+            "L": 455
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Fresh Veggi Special",
+          "description": "Cheese, onion, green pepper, mushroom, tomato, olives",
+          "sizes": {
+            "R": 265,
+            "M": 430,
+            "L": 570
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Cheese Burst",
+          "description": "3 kind of cheese, onion, capsicum, paneer & jalapeno",
+          "sizes": {
+            "R": 295,
+            "M": 465,
+            "L": 620
+          },
+          "price": null,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Desi Veg Pizza",
+      "lstInvSize": true,
+      "lstInventoryModifiers": false,
+      "sizeType": "",
+      "modifierGroup": "Extra Veg Topping",
+      "items": [
+        {
+          "name": "Tandoori Paneer",
+          "description": "Cheese, onion, Green pepper, Tomato, marinated tandoori paneer, tomato sauce",
+          "sizes": {
+            "R": 245,
+            "M": 365,
+            "L": 445
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Yum Dum",
+          "description": "Cheese, onion, Spinach, Spicy Paneer, Sindhi, Garlic, roasted spices",
+          "sizes": {
+            "R": 245,
+            "M": 365,
+            "L": 445
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Balle Balle",
+          "description": "Cheese, pizza pasalian paneer, chilly coriander, roasted cumin spatula",
+          "sizes": {
+            "R": 245,
+            "M": 365,
+            "L": 445
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Gujarati Treat",
+          "description": "Cheese, paneer masala pepper, chilly, garlic green pea masala, tomato",
+          "sizes": {
+            "R": 245,
+            "M": 365,
+            "L": 445
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Chatpatta Paneer",
+          "description": "Paneer, sweet corn, chutpatta, paneer, tomato sauce w/raw, red hot sprinkle",
+          "sizes": {
+            "R": 245,
+            "M": 365,
+            "L": 445
+          },
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Pav Bhaji",
+          "description": "Cheese, pav bhaji mix, butter, onion, tomato & coriander",
+          "sizes": {
+            "R": 245,
+            "M": 365,
+            "L": 445
+          },
+          "price": null,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Italian Veg Pizza",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": "ONLY_MEDIUM",
+      "modifierGroup": "Extra Topping",
+      "items": [
+        {
+          "name": "Classic Margherita",
+          "description": "Plum tomato, Basil & mozzarella",
+          "sizes": {},
+          "price": 345,
+          "modifierGroup": null
+        },
+        {
+          "name": "Funghi Di Bosco",
+          "description": "Mushrooms, garlic oil, basil, Jalapenos & mozzarella",
+          "sizes": {},
+          "price": 345,
+          "modifierGroup": null
+        },
+        {
+          "name": "Giardiniera",
+          "description": "Mixed peppers, mexican tomatoes, Olives, Mushroom & mozzarella",
+          "sizes": {},
+          "price": 345,
+          "modifierGroup": null
+        },
+        {
+          "name": "Char Grilled",
+          "description": "Grilled yellow, zucchini, mixed peppers, roasted tomatoes, paprika with mozzarella",
+          "sizes": {},
+          "price": 345,
+          "modifierGroup": null
+        },
+        {
+          "name": "Quattro Formaggie",
+          "description": "Mozzarella, cheddar, parmesan & bocconcini",
+          "sizes": {},
+          "price": 345,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Breads",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": "ONLY_MEDIUM",
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Garlic Bread",
+          "description": null,
+          "sizes": {},
+          "price": 75,
+          "modifierGroup": null
+        },
+        {
+          "name": "Garlic Bread N' Cheese",
+          "description": null,
+          "sizes": {},
+          "price": 95,
+          "modifierGroup": null
+        },
+        {
+          "name": "Supreme Garlic Bread",
+          "description": null,
+          "sizes": {},
+          "price": 125,
+          "modifierGroup": null
+        },
+        {
+          "name": "Jain Bread",
+          "description": null,
+          "sizes": {},
+          "price": 75,
+          "modifierGroup": null
+        },
+        {
+          "name": "Jain Bread N' Cheese",
+          "description": null,
+          "sizes": {},
+          "price": 95,
+          "modifierGroup": null
+        },
+        {
+          "name": "Supreme Jain Bread",
+          "description": null,
+          "sizes": {},
+          "price": 125,
+          "modifierGroup": null
+        },
+        {
+          "name": "Stuffed Garlic Bread",
+          "description": null,
+          "sizes": {},
+          "price": 125,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Starter",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": "ONLY_MEDIUM",
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Potato Wedges",
+          "description": null,
+          "sizes": {},
+          "price": 90,
+          "modifierGroup": null
+        },
+        {
+          "name": "Cheesy Potato Pops",
+          "description": null,
+          "sizes": {},
+          "price": 90,
+          "modifierGroup": null
+        },
+        {
+          "name": "Fresh Dough Bites",
+          "description": null,
+          "sizes": {},
+          "price": 90,
+          "modifierGroup": null
+        },
+        {
+          "name": "Signature French Fries",
+          "description": null,
+          "sizes": {},
+          "price": 90,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Salad",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": "ONLY_MEDIUM",
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Greek Salad",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Hawaiin Salad",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Russian Salad",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Mix Salad Bowl, Veg",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Wrap",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": "ONLY_MEDIUM",
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Veg Wrap",
+          "description": null,
+          "sizes": {},
+          "price": 99,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Pasta",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": "ONLY_MEDIUM",
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Roman Pasta",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Creamy Indian Pasta",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Pasta Alfredo",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Dessert",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": "ONLY_MEDIUM",
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Brownie",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Chocolate Pizza",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "category": "Beverages",
+      "lstInvSize": false,
+      "lstInventoryModifiers": false,
+      "sizeType": "ONLY_MEDIUM",
+      "modifierGroup": null,
+      "items": [
+        {
+          "name": "Coke",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Fanta",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Sprite",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        },
+        {
+          "name": "Mineral Water",
+          "description": null,
+          "sizes": {},
+          "price": null,
+          "modifierGroup": null
+        }
+      ]
+    }
+  ],
+  "modifierGroups": [
+    {
+      "groupName": "Extra Topping",
+      "type": "modifier",
+      "lstInvSize": true,
+      "options": [
+        {
+          "name": "Extra Cheese",
+          "price": 0,
+          "prices": {
+            "R": 40,
+            "M": 60,
+            "L": 90
+          },
+          "modifierGroup": null
+        },
+        {
+          "name": "Choice of Sauces",
+          "price": 0,
+          "prices": {
+            "R": 30,
+            "M": 40,
+            "L": 60
+          },
+          "modifierGroup": null
+        },
+        {
+          "name": "Upgrade to Thin Crust",
+          "price": 0,
+          "prices": {
+            "R": 30,
+            "M": 40,
+            "L": 60
+          },
+          "modifierGroup": null
+        }
+      ]
+    },
+    {
+      "groupName": "Extra Veg Topping",
+      "type": "modifier",
+      "lstInvSize": true,
+      "options": [
+        {
+          "name": "Onion, Tomato, Green Pepper, Spinach, Garlic",
+          "price": 0,
+          "prices": {
+            "R": 30,
+            "M": 40,
+            "L": 60
+          },
+          "modifierGroup": null
+        },
+        {
+          "name": "Corn, Chilli, Mushroom, Sweet Pea, Pineapple",
+          "price": 0,
+          "prices": {
+            "R": 40,
+            "M": 50,
+            "L": 70
+          },
+          "modifierGroup": null
+        },
+        {
+          "name": "Paneer, Tandoori Paneer, Spicy Paneer",
+          "price": 0,
+          "prices": {
+            "R": 50,
+            "M": 60,
+            "L": 80
+          },
+          "modifierGroup": null
+        }
+      ]
+    }
+  ]
+}
