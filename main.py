@@ -65,28 +65,57 @@ async def process_menu(
     authorized: bool = Depends(verify_token)
 ):
     temp_file_path = None
+    temp_image_paths = []
 
     try:
-        # 1️⃣ Download image
+        # 1️⃣ Download file
         response = requests.get(payload.fileurl, timeout=30)
         response.raise_for_status()
 
-        # 2️⃣ Save to temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as temp_file:
+        # 2️⃣ Detect extension from URL or content-type header
+        allowed = [".pdf", ".png", ".jpg", ".jpeg"]
+        parsed_url = urllib.parse.urlparse(payload.fileurl)
+        ext = Path(urllib.parse.unquote(parsed_url.path)).suffix.lower()
+        if not ext or ext not in allowed:
+            ctype = response.headers.get("content-type", "")
+            if "pdf" in ctype:
+                ext = ".pdf"
+            elif "png" in ctype:
+                ext = ".png"
+            else:
+                ext = ".jpg"
+        if ext not in allowed:
+            raise HTTPException(status_code=400, detail=f"Unsupported file type: {ext}")
+
+        # 3️⃣ Save to temporary file with correct extension
+        with tempfile.NamedTemporaryFile(delete=False, suffix=ext) as temp_file:
             temp_file.write(response.content)
             temp_file_path = temp_file.name
 
-        # 3️⃣ Read image bytes
-        with open(temp_file_path, "rb") as f:
-            image_bytes = f.read()
-
-        # 4️⃣ Call Bedrock (menu extraction)
-        chatgpt_json, unique_id, chatgpt_path = extract_menu_from_image(image_bytes)
+        # 4️⃣ PDF: convert each page to image and process; images: process directly
+        if ext == ".pdf":
+            with open(temp_file_path, "rb") as f:
+                pdf_bytes = f.read()
+            temp_image_paths = pdf_to_images(pdf_bytes)
+            merged_json = None
+            for img_path in temp_image_paths:
+                with open(img_path, "rb") as f:
+                    image_bytes = f.read()
+                page_json, unique_id, _ = extract_menu_from_image(image_bytes)
+                if merged_json is None:
+                    merged_json = page_json
+                else:
+                    merged_json["categories"] = merged_json.get("categories", []) + page_json.get("categories", [])
+            chatgpt_json = merged_json
+        else:
+            with open(temp_file_path, "rb") as f:
+                image_bytes = f.read()
+            chatgpt_json, unique_id, _ = extract_menu_from_image(image_bytes)
 
         # 5️⃣ Transform JSON
         transformed_path = save_transformed_json(chatgpt_json, unique_id)
 
-        # Return ChatGPT output JSON content directly (read from saved file)
+        # Return transformed JSON content
         with open(transformed_path, "r", encoding="utf-8") as rf:
             return json.load(rf)
 
@@ -94,9 +123,14 @@ async def process_menu(
         raise HTTPException(status_code=500, detail=str(e))
 
     finally:
-        # 6️⃣ Delete temp file
         if temp_file_path and os.path.exists(temp_file_path):
             os.remove(temp_file_path)
+        for p in temp_image_paths:
+            try:
+                if os.path.exists(p):
+                    os.remove(p)
+            except Exception:
+                pass
 
 class InvoiceURLRequest(BaseModel):
     fileurl: str
