@@ -29,7 +29,9 @@ def build_size_list(item):
 
 # ---------------- BUILD MODIFIER GROUPS ----------------
 def build_modifier_groups(item, category, all_modifier_groups):
-    parent_modifier_group_name = category.get("modifierGroup")
+    # Item-level modifiers (Section 4/4B) are set on the item itself;
+    # category-level / shared modifiers (Section 6/7) are set on the category.
+    parent_modifier_group_name = item.get("modifierGroup") or category.get("modifierGroup")
 
     if not parent_modifier_group_name:
         return []
@@ -93,6 +95,51 @@ def build_modifier_groups(item, category, all_modifier_groups):
 
 
 
+# ---------------- BUILD COMBO MODIFIER GROUPS ----------------
+def build_combo_modifier_groups(item):
+    combo_groups = item.get("comboGroups") or []
+
+    result_modifiers = []
+
+    for group_index, group in enumerate(combo_groups):
+        modifier_items = [
+            {
+                "nvarModifierItemName": option.get("name"),
+                "dcmlPrice": option.get("price") or 0
+            }
+            for option in group.get("options", [])
+        ]
+
+        result_modifiers.append({
+            "nvarModName": group.get("groupName"),
+            "nvarModNum": "",
+            "MinQty": group.get("minQty", 1),
+            "MaxQty": group.get("maxQty", 1),
+            "intDisplayIndex": group_index,
+            "intIsInclude": 1 if group.get("isInclude") else 0,
+            "bitIsHalf": False,
+            "bitIsDeleted": False,
+            "dcmlMOdiGrpPrice": 0,
+            "lstModItemOfModGrp": modifier_items
+        })
+
+    return result_modifiers
+
+
+# ---------------- RESOLVE ITEM TYPE ----------------
+def resolve_item_type(item, category):
+    raw_type = (item.get("itemType") or "").strip().lower()
+    if raw_type == "combo":
+        return "5"
+
+    name = item.get("name") or ""
+    department_name = category.get("category") or ""
+    if "combo" in name.lower() or "combo" in department_name.lower():
+        return "5"
+
+    return "product"
+
+
 # ---------------- TRANSFORM ----------------
 def transform_menu(input_data):
     output_items = []
@@ -111,7 +158,12 @@ def transform_menu(input_data):
             if base_price is None:
                 base_price = 0
 
-            modifiers = build_modifier_groups(item, category, modifier_groups)
+            item_type = resolve_item_type(item, category)
+
+            if item_type == "5":
+                modifiers = build_combo_modifier_groups(item)
+            else:
+                modifiers = build_modifier_groups(item, category, modifier_groups)
 
             transformed_item = {
                 "DepartmentName": department_name,
@@ -120,7 +172,7 @@ def transform_menu(input_data):
                 "Id": "",
                 "ItemDescription": (item.get("description") or "").lower(),
                 "Price": f"{base_price:.2f}",
-                "ItemType": "product",
+                "ItemType": item_type,
                 "IsModifier": False,
                 "ModifierType": None,
                 "BonusPoints": 0,

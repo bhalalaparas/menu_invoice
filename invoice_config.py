@@ -2,6 +2,7 @@
 
 import os
 import boto3
+from botocore.config import Config
 from env_loader import load_env_file
 
 # Tesseract path
@@ -24,11 +25,17 @@ AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
 AWS_REGION = "us-east-1"
 STATIC_API_TOKEN = os.getenv("STATIC_API_TOKEN", "qwertyuioplkjhgfdsazxcvbnm123")
 
+BEDROCK_CLIENT_CONFIG = Config(
+    connect_timeout=30,
+    read_timeout=300,
+)
+
 BRT = boto3.client(
     "bedrock-runtime",
     region_name=AWS_REGION,
     aws_access_key_id=AWS_ACCESS_KEY_ID,
     aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    config=BEDROCK_CLIENT_CONFIG,
 )
 
 RENDER_DPI = 200

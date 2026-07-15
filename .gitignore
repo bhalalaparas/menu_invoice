@@ -2,3 +2,6 @@ __pycache__/
 *.pyc 
 results/*.json 
 .env
+output
+results
+uploads

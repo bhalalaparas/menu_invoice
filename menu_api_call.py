@@ -80,7 +80,7 @@ def extract_menu_from_image(image_bytes):
 
     body = {
         "anthropic_version": "bedrock-2023-05-31",
-        "max_tokens": 8000,
+        "max_tokens": 15000,
         "messages": [{"role": "user", "content": content}],
     }
 

@@ -46,6 +46,27 @@ If no size exists at all:
     "sizeType": null
 
 --------------------------------------------------
+2B. MIXED SIZE CATEGORIES (PER-ITEM SIZES)
+--------------------------------------------------
+
+Some categories are otherwise flat, single-price categories, but ONE or A FEW individual items show their own inline size-based pricing directly in that item's row (e.g. "Milk Sm 2.25 ... Lrg 2.95" inside a category where every other item has one plain price).
+
+In this case:
+
+- Do NOT apply sizes to the whole category.
+- Leave the category as flat ("lstInvSize": false, "sizeType": null) if most items are plain-priced.
+- For the specific item(s) that show inline sizes, set:
+    "sizes": { "Sm": price, "Lrg": price }
+    (use whatever size labels appear next to that item, e.g. "Sm"/"Lrg", "Small"/"Large", "Half"/"Full")
+    "price": null
+- All other items in that category keep their normal single "price" value and empty "sizes": {}.
+
+Example:
+  Category "Beverages" (flat, single price):
+    - "Coffee"       → "price": 2.50, "sizes": {}
+    - "Milk"         → "price": null, "sizes": { "Sm": 2.25, "Lrg": 2.95 }
+
+--------------------------------------------------
 3. PRICE FORMAT DETECTION
 --------------------------------------------------
 
@@ -139,6 +160,50 @@ E) Item structure when modifier exists:
 IMPORTANT:
 - Do NOT keep combined price at item level.
 - Move all pricing into modifier options.
+
+--------------------------------------------------
+4B. TEXTUAL CHOICE MODIFIER (NO BRACKETS)
+--------------------------------------------------
+
+Some items offer a choice between named options WITHOUT brackets, expressed as plain text such as:
+   "with Bacon, or Sausage Patties, or Bologna, or Liver Mush ... 8.95"
+   "with Ham or Links ... 9.25"
+   "choice of A, or B ... price"
+
+If an item's text lists two or more named choices (separated by commas and/or "or") introduced by words like "with" / "choice of" / "your choice of", AND different choice groups carry DIFFERENT prices (multi-tier pricing for the same base item), treat this as an ITEM-LEVEL MODIFIER using the same structure as Section 4:
+
+A) Set category: "lstInventoryModifiers": true
+
+B) Strip the choice text from the item name, keeping only the base item name (e.g. "Waffle").
+
+C) Create ONE modifier group for the item:
+
+{
+  "groupName": "Item Name Modifiers",
+  "type": "modifier",
+  "lstInvSize": false,
+  "options": [
+    { "name": "Choice A", "price": 0, "modifierGroup": null },
+    { "name": "Choice B", "price": 0, "modifierGroup": null }
+  ]
+}
+
+D) Split EACH individual choice name (comma/"or"-separated) within a price tier into its OWN modifier option, and assign that tier's price to every option within that tier.
+
+   Example: "with Bacon, or Sausage Patties, or Bologna, or Liver Mush ... 8.95 with Ham or Links ... 9.25"
+   → options: Bacon (8.95), Sausage Patties (8.95), Bologna (8.95), Liver Mush (8.95), Ham (9.25), Links (9.25)
+
+E) Item structure when this modifier exists:
+
+{
+  "name": "Waffle",
+  "description": null,
+  "sizes": {},
+  "price": null,
+  "modifierGroup": "Waffle Modifiers"
+}
+
+F) Do NOT trigger this rule for plain descriptive "choice of" text that has only ONE price for the whole item (e.g. a combo where every choice costs the same and only one price is printed). That stays a plain item with a single price (see Section 9). Only trigger when different choice groups map to DIFFERENT prices.
 
 --------------------------------------------------
 5. MIXED MODIFIER CATEGORIES
@@ -316,6 +381,92 @@ And category:
     "lstInventoryModifiers": false
 
 --------------------------------------------------
+9B. ITEM TYPE DETECTION (PRODUCT VS COMBO)
+--------------------------------------------------
+
+Every item must be classified with an "itemType" field:
+
+- Set "itemType": "combo" if:
+    - The item name or its category name contains bundle wording such as "Combo", "Meal", "Set Meal", "Value Meal", "Platter Combo", or similar, OR
+    - The item explicitly bundles multiple separate components into one fixed price (e.g. "Waffle Combo w/ Two Eggs, Bacon or Sausage, and Toast").
+
+- Otherwise set "itemType": "product" (default for all normal, non-bundled menu items).
+
+For "itemType": "combo" items:
+   - Do NOT use "modifierGroup" / "sizes" for the combo's bundled components — use "comboGroups" instead (see Section 9C).
+   - "sizes" stays {} and "modifierGroup" stays null on the item, unless the combo itself is separately offered in multiple sizes.
+   - "price" is the combo's own total price (e.g. 11.45).
+
+For "itemType": "product" items, "comboGroups" stays [] (unused) and normal "sizes" / "modifierGroup" rules (Sections 2, 2B, 4, 4B, 6, 7) apply as usual.
+
+--------------------------------------------------
+9C. COMBO COMPONENT BREAKDOWN ("comboGroups")
+--------------------------------------------------
+
+For every "itemType": "combo" item, break down its bundled components into "comboGroups". Read the combo's full text (e.g. "Two Eggs* with choice of Bacon, Sausage Patties, Liver Mush or Beef Bologna, served with Grits, Hash Browns, or Home Fries, and a Waffle") and identify each distinct component:
+
+A) FIXED / INCLUDED component (no choice, always part of the combo, e.g. "Two Eggs", "a Waffle", "Toast or Biscuit" if only one is always given):
+   - One comboGroup per fixed component.
+   - "isInclude": true
+   - "minQty": 1, "maxQty": 1
+   - Exactly ONE option in "options", price 0 (already covered by the combo price) unless the menu prints an explicit extra charge.
+
+B) CHOICE component (customer selects one from a named list, e.g. "choice of Bacon, Sausage Patties, Liver Mush or Beef Bologna"):
+   - One comboGroup per distinct choice category (e.g. "Choice of Meat", "Choice of Side", "Choice of Bread").
+   - "isInclude": false
+   - "minQty": 1, "maxQty": 1 (or higher "maxQty" only if the menu explicitly allows selecting more than one)
+   - Split each named choice (comma/"or"-separated) into its own option, price 0 unless the menu shows an explicit add-on charge for that specific choice.
+
+C) Name each comboGroup by what it represents (e.g. "Eggs", "Choice of Meat", "Choice of Side"), not generically.
+
+D) Combine the combo's full bundled text into one natural-language sentence in the item's "description" field (e.g. "Two eggs with choice of bacon, sausage patties, liver mush or beef bologna, served with grits, hash browns, or home fries and a waffle.").
+
+E) Structure:
+
+{
+  "name": "Super Waffle Combo",
+  "description": "Two eggs with choice of bacon, sausage patties, liver mush or beef bologna, served with grits or hash browns or home fries and a waffle combo.",
+  "sizes": {},
+  "price": 11.45,
+  "modifierGroup": null,
+  "itemType": "combo",
+  "comboGroups": [
+    {
+      "groupName": "Eggs",
+      "isInclude": true,
+      "minQty": 1,
+      "maxQty": 1,
+      "options": [ { "name": "Two Eggs", "price": 0 } ]
+    },
+    {
+      "groupName": "Choice of Meat",
+      "isInclude": false,
+      "minQty": 1,
+      "maxQty": 1,
+      "options": [
+        { "name": "Bacon", "price": 0 },
+        { "name": "Sausage Patties", "price": 0 },
+        { "name": "Liver Mush", "price": 0 },
+        { "name": "Beef Bologna", "price": 0 }
+      ]
+    },
+    {
+      "groupName": "Choice of Side",
+      "isInclude": false,
+      "minQty": 1,
+      "maxQty": 1,
+      "options": [
+        { "name": "Grits", "price": 0 },
+        { "name": "Hash Browns", "price": 0 },
+        { "name": "Home Fries", "price": 0 }
+      ]
+    }
+  ]
+}
+
+F) This applies to ANY combo menu, not just breakfast combos — pizza combos, burger combos, thali/set-meal combos, etc. Always decompose into "fixed inclusion" groups vs "choice" groups using rules A and B above, regardless of cuisine or category name.
+
+--------------------------------------------------
 10. MODIFIER PRIORITY RULE
 --------------------------------------------------
 
@@ -345,7 +496,9 @@ Return ONLY this JSON structure:
           "description": null,
           "sizes": {},
           "price": null,
-          "modifierGroup": null
+          "modifierGroup": null,
+          "itemType": "product",
+          "comboGroups": []
         }
       ]
     }
@@ -382,6 +535,8 @@ Return ONLY this JSON structure:
 - "sizeType" must be null unless it is "ONLY_MEDIUM".
 - "modifierGroup" at category or item level must be null when not applicable.
 - "prices" field in modifier options must be {} (empty object) when not applicable.
+- "itemType" must be "product" for every regular item, and "combo" only for bundled/combo items (see Section 9B).
+- "comboGroups" must be [] for "product" items, and fully populated (fixed + choice groups, see Section 9C) for "combo" items.
 - Return ONLY valid JSON.
 - Do NOT add explanations.
 - Do NOT use markdown.
