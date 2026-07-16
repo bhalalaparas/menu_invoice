@@ -67,6 +67,23 @@ Example:
     - "Milk"         → "price": null, "sizes": { "Sm": 2.25, "Lrg": 2.95 }
 
 --------------------------------------------------
+2C. PORTION-SIZE TIERS SHARING ONE DESCRIPTION (AVOID DUPLICATE ITEMS)
+--------------------------------------------------
+
+Some menus present ONE dish/description followed by several named portion-size tiers with different prices — shown as boxes, a header table, or inline labels (e.g. MINI/SENIOR/REGULAR/XLARGE, Small/Medium/Large/Family, Personal/Regular/Large, 4pcs/7pcs/12pcs/20pcs, Half/Full). This can happen regardless of visual layout — boxes, a table, or plain inline text — not just an inline R/M/L column next to the item row.
+
+DETECTION RULE (works for ANY menu style, ANY tier wording):
+Before finalizing items in a category, check: are you about to create MORE THAN ONE item that share the EXACT SAME (or near-identical) name/description and differ ONLY by a size/portion/quantity label and its price? If yes, STOP — merge them into ONE item instead.
+
+Rule:
+- Create exactly ONE item using the shared description.
+- "sizes": { "<tier label 1>": price, "<tier label 2>": price, ... } — use the exact tier labels/wording printed on the menu (e.g. "Mini", "Senior", "Regular", "XLarge", "4pcs", "7pcs").
+- "price": null (the price lives entirely in "sizes").
+- Do NOT create a separate item per tier, even if the tiers are printed in separate boxes/columns/callouts rather than a single row.
+
+This generalizes Section 2 to portion/quantity-tier wording beyond R/M/L, and applies to any category where one dish is offered at multiple named tiers.
+
+--------------------------------------------------
 3. PRICE FORMAT DETECTION
 --------------------------------------------------
 
@@ -160,6 +177,7 @@ E) Item structure when modifier exists:
 IMPORTANT:
 - Do NOT keep combined price at item level.
 - Move all pricing into modifier options.
+- EXCEPTION: if every option costs the SAME amount (i.e. the menu prints only ONE overall price and the choice doesn't change it), do NOT null the item price — see Section 4C instead.
 
 --------------------------------------------------
 4B. TEXTUAL CHOICE MODIFIER (NO BRACKETS)
@@ -203,7 +221,41 @@ E) Item structure when this modifier exists:
   "modifierGroup": "Waffle Modifiers"
 }
 
-F) Do NOT trigger this rule for plain descriptive "choice of" text that has only ONE price for the whole item (e.g. a combo where every choice costs the same and only one price is printed). That stays a plain item with a single price (see Section 9). Only trigger when different choice groups map to DIFFERENT prices.
+F) Do NOT trigger this rule (the multi-tier price split) for plain descriptive "choice of" text that has only ONE price for the whole item. Only trigger THIS rule (4B) when different choice groups map to DIFFERENT prices. When there is only ONE overall price, still capture the choice as a modifier — without splitting the price — per Section 4D.
+
+--------------------------------------------------
+4C. PRICE RETENTION RULE FOR NO-COST CHOICE MODIFIERS
+--------------------------------------------------
+
+Before nulling an item's "price" because a modifier group exists (Sections 4, 4B, 6, 7), check whether the modifier's options actually change the total price:
+
+- If EVERY option in the modifier group costs the SAME amount (including all being 0) — meaning the choice is just a variant/flavor/filling pick and the menu prints only ONE overall price for the item — then:
+    - KEEP the item's own "price" as that single printed price (do NOT null it).
+    - Set every option's "price" to 0 (the cost is already included in the item price).
+
+- Only set the item's "price" to null when different options carry genuinely DIFFERENT prices that change what the customer pays (a true upcharge/price-tier modifier, as in Section 4B).
+
+This rule applies globally to item-level (4/4B), category-level (6), and shared category-level (7) modifiers — never lose the printed price of an item just because it also offers a same-price choice.
+
+Example: "Pie Special — ALL £11.75 — Choose from: Steak, Meat & Potato, Cheese & Onion, Meat Pie, Steak Pudding" → "price": 11.75 (kept), every filling option priced 0.
+
+--------------------------------------------------
+4D. SINGLE-PRICE CHOICE MODIFIER (FLAT ALTERNATIVES, NO PRICE SPLIT)
+--------------------------------------------------
+
+Some items or categories list several named alternatives (flavors, fillings, proteins, sauces, toppings, etc. — separated by commas/"or"/newlines) where the menu prints only ONE overall price (no per-choice price difference). Examples: "Pie Special — ALL £11.75 — Choose from: Steak, Meat & Potato, Cheese & Onion, Meat Pie, Steak Pudding" or "Crispy Shredded Chicken — Choose a flavour! Plain, Salt & Pepper or Salt & Chilli — £11.75".
+
+For this pattern:
+
+A) Keep the item's own "price" as the single printed price (per Section 4C — do NOT null it).
+
+B) Still capture every named alternative as a modifier — do NOT drop the choice information just because there's no price split. Wrap ALL alternatives under ONE modifier group named after what is being chosen (e.g. "Choice of Filling", "Choice of Flavour"), using the NESTED MODIFIER GROUP mechanism from Section 8:
+   - The item's (or category's) own modifierGroup has exactly ONE option — the wrapping choice name (e.g. "Choice of Filling") — whose own "modifierGroup" field points to a second modifierGroups entry.
+   - That second modifierGroups entry lists every named alternative (Steak, Meat & Potato, Cheese & Onion, ...) as its options, each "price": 0.
+
+C) Do NOT create one separate top-level modifier per alternative (e.g. do NOT create 5 separate sibling groups named "Steak", "Meat & Potato", etc. each with no sub-options) — every alternative must be a nested option inside the ONE wrapping group.
+
+D) This applies whether the choice is described at item level (Section 4) or for an entire category (Section 6) — use the same item/category "modifierGroup" assignment mechanics already defined in those sections, just wrap the flat list per this rule instead of exploding it.
 
 --------------------------------------------------
 5. MIXED MODIFIER CATEGORIES
@@ -399,6 +451,8 @@ For "itemType": "combo" items:
 
 For "itemType": "product" items, "comboGroups" stays [] (unused) and normal "sizes" / "modifierGroup" rules (Sections 2, 2B, 4, 4B, 6, 7) apply as usual.
 
+CONSISTENCY RULE: If the exact same item name/description text appears in more than one category/section of the menu (e.g. the same combo listed both in a "Combos" section and again in a "Mains" section), classify and structure it IDENTICALLY everywhere it appears — same "itemType", same "sizes"/"comboGroups"/"modifierGroup" breakdown, same level of detail. Base classification purely on the item's own text — never on which category box or section it happens to be printed in.
+
 --------------------------------------------------
 9C. COMBO COMPONENT BREAKDOWN ("comboGroups")
 --------------------------------------------------
@@ -528,7 +582,7 @@ Return ONLY this JSON structure:
 - Keep prices as numbers only (no "/- " suffix, no currency symbols).
 - Remove brackets and their content from item names.
 - Do not duplicate modifier groups.
-- Do not leave price at item level if a modifier group exists.
+- Do not leave price at item level if a modifier group exists, UNLESS every option in that modifier group is equal-price/no-cost (see Section 4C) — in that case keep the item price and set option prices to 0.
 - If price count and modifier count mismatch, map sequentially; assign 0 to unpaired options.
 - Nested modifiers must reference parent modifier correctly.
 - If a field is not applicable, set it to null (NOT empty string "").
@@ -537,6 +591,8 @@ Return ONLY this JSON structure:
 - "prices" field in modifier options must be {} (empty object) when not applicable.
 - "itemType" must be "product" for every regular item, and "combo" only for bundled/combo items (see Section 9B).
 - "comboGroups" must be [] for "product" items, and fully populated (fixed + choice groups, see Section 9C) for "combo" items.
+- Do not create multiple items in a category that share the same name/description and differ only by a size/portion tier label — merge into one item with "sizes" instead (see Section 2C).
+- If the same item text appears in more than one category, classify and structure it identically everywhere (see Section 9B consistency rule).
 - Return ONLY valid JSON.
 - Do NOT add explanations.
 - Do NOT use markdown.
