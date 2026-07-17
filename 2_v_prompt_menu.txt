@@ -306,6 +306,29 @@ D) Map prices sequentially per item if multiple prices exist.
 E) Do NOT create separate modifier groups per item.
 
 --------------------------------------------------
+6B. CATEGORY-WIDE INCLUDED SERVING NOTE (NO PRICE, MULTIPLE CHOICE GROUPS)
+--------------------------------------------------
+
+Some categories carry a shared note — a header or footer line positioned ABOVE/BELOW the item list rather than inside any single item's own row/price cell — describing what EVERY item in that category is served with. Examples:
+   "Served with Hash Browns, or Grits or Home Fries, and Toast or Biscuit."
+   "Two Eggs* served with Home Fries or Grits or Hash Browns, and Toast or Biscuit."
+
+Treat this as a CATEGORY-LEVEL MODIFIER (Section 6) with these specifics:
+
+A) No price change: the note is already included in every item's own price. Follow the price-retention rule (Section 4C) — keep each item's own printed "price", and price every modifier option 0.
+
+B) The note may describe MORE THAN ONE independent choice group joined by "and"/commas (e.g. a side choice AND a separate bread choice). Do NOT flatten these into one list. Create ONE modifier group per distinct choice category (e.g. "Choose Side", "Choose Bread"), each wrapped using the SAME nested-wrap mechanism as Section 4D:
+   - The category's own "modifierGroup" points to ONE modifierGroups entry whose "options" are the wrapping choice names ("Choose Side", "Choose Bread", etc.), each option's own "modifierGroup" pointing to a further modifierGroups entry holding the actual named choices (e.g. Hash Browns/Grits/Home Fries under "Choose Side"; Toast/Biscuit under "Choose Bread").
+
+C) Apply this "modifierGroup" at the CATEGORY level (per Section 6) so it covers EVERY item in the category — do not attach it per item.
+
+D) Copy the shared note text into EACH item's own "description" field as well (combine with any item-specific description text if present), so no item is left with a blank description just because its serving note lives outside the item row.
+
+E) If the identical (or near-identical) shared note/choice set recurs across MULTIPLE categories (e.g. the same Hash Browns/Grits/Home Fries + Toast/Biscuit choice appears under an omelette category, a steak-and-eggs category, and a fish category), do NOT rebuild duplicate modifier groups per category. Define the wrapping group and its nested choice groups ONCE in "modifierGroups", and assign that SAME "modifierGroup" name to every matching category — this qualifies as a SHARED CATEGORY-LEVEL MODIFIER (Section 7) even without an explicitly named header like "Extra Topping."
+
+F) This pattern is not limited to breakfast sides — any cuisine/menu style where a whole category shares an included, no-extra-cost choice note (e.g. "Served with rice or naan", "Includes soup or salad", "Comes with fries or side salad") follows this same rule.
+
+--------------------------------------------------
 7. SHARED CATEGORY-LEVEL MODIFIER (MULTIPLE CATEGORIES)
 --------------------------------------------------
 
@@ -315,6 +338,8 @@ If a separate section exists such as:
 - Add Ons
 - Upgrade Options
 - Additional Toppings
+
+...OR a repeated shared serving note without a distinct named header (see Section 6B-E, e.g. the same "served with X or Y" choice printed under several categories)
 
 And it clearly applies to multiple categories
 (e.g., American Veg Pizza, Desi Veg Pizza, Italian Veg Pizza),
@@ -593,6 +618,7 @@ Return ONLY this JSON structure:
 - "comboGroups" must be [] for "product" items, and fully populated (fixed + choice groups, see Section 9C) for "combo" items.
 - Do not create multiple items in a category that share the same name/description and differ only by a size/portion tier label — merge into one item with "sizes" instead (see Section 2C).
 - If the same item text appears in more than one category, classify and structure it identically everywhere (see Section 9B consistency rule).
+- Do not leave "description" blank or skip modifiers just because a category's serving note (e.g. "served with X or Y, and A or B") sits outside the item row — apply it to every item in the category per Section 6B.
 - Return ONLY valid JSON.
 - Do NOT add explanations.
 - Do NOT use markdown.

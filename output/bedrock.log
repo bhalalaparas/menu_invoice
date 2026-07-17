@@ -17,3 +17,6 @@
 2026-07-08 20:21:49,995 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6 in_tok=5793 out_tok=3621
 2026-07-09 18:01:14,195 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6 in_tok=6751 out_tok=5680
 2026-07-09 18:35:25,239 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6 in_tok=6784 out_tok=8080
+2026-07-17 17:29:46,293 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6 in_tok=8159 out_tok=5052
+2026-07-17 17:32:37,875 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6 in_tok=9056 out_tok=5680
+2026-07-17 17:37:11,429 | INFO | source=menu_api_call model=arn:aws:bedrock:us-east-1:078805859846:inference-profile/us.anthropic.claude-sonnet-4-6 in_tok=9089 out_tok=7295
